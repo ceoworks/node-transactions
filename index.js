@@ -1,7 +1,3 @@
-var co = require('co'),
-	async = require('async'),
-	_ = require('lodash');
-
 function *Transaction(tasks, context) {
 	// context.db, context.data etc.
 	this.tasks = tasks;
@@ -12,35 +8,43 @@ function *Transaction(tasks, context) {
 }
 
 Transaction.prototype.perform = function *() {
-	var transaction, performingTasks, db, self, result, operation, rollbackOrder;
+	var self, result, rollbackTasks, errors;
 	self = this;
-	db = self.context.db;
 
 	for (var task of self.tasks) {
-		// try/catch errors and brake if some
 		try {
 			result = yield task.perform(self.context);
-			self.context[task.name] = result;
+			self.context[task.name + 'Result'] = result;
 			self.setState(task.name);
 		} catch (ex) {
-			rollbackOrder = self.getRollbackOrder();
-			yield self.rollback(rollbackOrder);
-			return { success: false, error: ex };
+			rollbackTasks = self.getRollbackTasks();
+			errors = yield self.rollback(rollbackTasks);
+			return { success: false, context: self.context, error: ex, rollbackErrors: errors };
 		}
 	}
 	return { success: true, context: self.context };
 };
 
-Transaction.prototype.getRollbackOrder = function () {
-	var state, index, rollbackOrder;
+Transaction.prototype.getRollbackTasks = function () {
+	var state, index, rollbackTasks;
 	state = this._state;
 	index = this._order.indexOf(state);
-	rollbackOrder = this._order.slice(0, index).reverse();
-	return rollbackOrder;
+	rollbackTasks = this.tasks.slice(0, index + 1).reverse();
+	return rollbackTasks;
 };
 
-Transaction.prototype.rollback = function *(rollbackOrder) {
-	return rollbackOrder;
+Transaction.prototype.rollback = function *(rollbackTasks) {
+	var result, errors, self;
+	self = this;
+	errors = [];
+	for (var task of rollbackTasks) {
+		try {
+			result = yield task.rollback(self.context);
+		} catch (ex) {
+			errors.push(ex);
+		}
+	}
+	return errors;
 };
 
 Transaction.prototype.setState = function (state) {
