@@ -12,9 +12,12 @@ Transaction.prototype.perform = function *() {
 	self = this;
 
 	for (var task of self.tasks) {
+		if (!self.context[task.name]) {
+			self.context[task.name] = {};
+		}
 		try {
 			result = yield task.perform(self.context);
-			self.context[task.name + 'Result'] = result;
+			self.context[task.name].performResult = result;
 			self.setState(task.name);
 		} catch (ex) {
 			rollbackTasks = self.getRollbackTasks();
@@ -34,12 +37,12 @@ Transaction.prototype.getRollbackTasks = function () {
 };
 
 Transaction.prototype.rollback = function *(rollbackTasks) {
-	var result, errors, self;
+	var errors, self;
 	self = this;
 	errors = [];
 	for (var task of rollbackTasks) {
 		try {
-			result = yield task.rollback(self.context);
+			self.context[task.name].rbResult = yield task.rollback(self.context);
 		} catch (ex) {
 			errors.push(ex);
 		}
@@ -53,16 +56,3 @@ Transaction.prototype.setState = function (state) {
 };
 
 module.exports = Transaction;
-
-
-// transaction = (yield db.Transactions.collection.insertOne({state: 'initial'})).ops[0];
-// if (!result.length) {
-// 	throw new Error('Inserting transaction with initial state failed');
-// }
-
-// yield self.context.db.Transactions.collection.findOneAndUpdate({_id: self._id}, { $set: { state: task.name } }, { returnOriginal: false });
-// if (!operation.value || operation.value.state !== task.name) {
-// 	rollbackOrder = self.getRollbackOrder(task.name);
-// 	return self.rollback(rollbackOrder);
-// 	break;
-// }
