@@ -4,7 +4,8 @@
   "description": "Transactions engine for node.js",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "./node_modules/mocha/bin/mocha ./test/*.spec.js",
+    "test-travis": "./node_modules/istanbul/lib/cli.js cover ./node_modules/mocha/bin/_mocha -- -R spec ./test/*"
   },
   "repository": {
     "type": "git",
@@ -22,7 +23,12 @@
     "url": "https://github.com/ceoworks/node-transactions/issues"
   },
   "homepage": "https://github.com/ceoworks/node-transactions#readme",
-  "dependencies": {
-    "lodash": "^4.0.0"
+  "dependencies": {},
+  "devDependencies": {
+    "chai": "^3.4.1",
+    "co-mocha": "^1.1.2",
+    "coveralls": "^2.11.6",
+    "istanbul": "^0.4.2",
+    "mocha": "^2.3.4"
   }
 }

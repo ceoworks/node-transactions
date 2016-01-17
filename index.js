@@ -25,7 +25,7 @@ Transaction.prototype.perform = function *() {
 			return { success: false, context: self.context, error: ex, rollbackErrors: errors };
 		}
 	}
-	return { success: true, context: self.context };
+	return { success: true, context: self.context, error: null, rollbackErrors: [] };
 };
 
 Transaction.prototype.getRollbackTasks = function () {
