@@ -1,9 +1,8 @@
 function *Transaction(tasks, context) {
-	// context.db, context.data etc.
 	this.tasks = tasks;
 	this.context = context;
-	this.setState('initial');
 	this._order = tasks.map( task => task.name );
+	yield this.setState({ name: 'initial' }, 'initiation', context);
 	return yield this.perform();
 }
 
@@ -18,14 +17,24 @@ Transaction.prototype.perform = function *() {
 		try {
 			result = yield task.perform(self.context);
 			self.context[task.name].performResult = result;
-			self.setState(task.name);
+			yield self.setState(task, 'perform', self.context);
 		} catch (ex) {
 			rollbackTasks = self.getRollbackTasks();
 			errors = yield self.rollback(rollbackTasks);
-			return { success: false, context: self.context, error: ex, rollbackErrors: errors };
+			return {
+				success: false,
+				context: self.context,
+				error: ex,
+				rollbackErrors: errors
+			};
 		}
 	}
-	return { success: true, context: self.context, error: null, rollbackErrors: [] };
+	return {
+		success: true,
+		context: self.context,
+		error: null,
+		rollbackErrors: []
+	};
 };
 
 Transaction.prototype.getRollbackTasks = function () {
@@ -42,7 +51,8 @@ Transaction.prototype.rollback = function *(rollbackTasks) {
 	errors = [];
 	for (var task of rollbackTasks) {
 		try {
-			self.context[task.name].rbResult = yield task.rollback(self.context);
+			self.context[task.name].rollbackResult = yield task.rollback(self.context);
+			yield self.setState(task, 'rollback', self.context);
 		} catch (ex) {
 			errors.push(ex);
 		}
@@ -50,8 +60,11 @@ Transaction.prototype.rollback = function *(rollbackTasks) {
 	return errors;
 };
 
-Transaction.prototype.setState = function (state) {
-	this._state = state;
+Transaction.prototype.setState = function *(task, phase, context) {
+	this._state = task.name;
+	if (context.storeTransactionState) {
+		yield context.storeTransactionState(task.name, phase, context);
+	}
 	return;
 };
 
