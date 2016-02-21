@@ -65,8 +65,8 @@ describe('node transactions engine', function () {
 			expect(result.context.addition.performResult).to.equal(15);
 			expect(result.context.subtraction.performResult).to.equal(5);
 
-			expect(result.context.addition.rbResult).to.equal(100);
-			expect(result.context.subtraction.rbResult).to.equal(25);
+			expect(result.context.addition.rollbackResult).to.equal(100);
+			expect(result.context.subtraction.rollbackResult).to.equal(25);
 		});
 	});
 });
