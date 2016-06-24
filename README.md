@@ -2,11 +2,17 @@
 
 [![Build Status](https://secure.travis-ci.org/ceoworks/node-transactions.png?branch=master)](http://travis-ci.org/ceoworks/node-transactions)
 [![Coverage Status](https://coveralls.io/repos/ceoworks/node-transactions/badge.svg)](https://coveralls.io/r/ceoworks/node-transactions)
+[![npm](https://img.shields.io/npm/dt/n.svg?style=flat-square)](https://www.npmjs.com/package/node-transactions)
+[![npm](https://img.shields.io/npm/dm/n.svg?style=flat-square)](https://www.npmjs.com/package/node-transactions)
+[![npm](https://img.shields.io/npm/v/n.svg?style=flat-square)](https://www.npmjs.com/package/node-transactions)
+[![npm](https://img.shields.io/npm/l/n.svg?style=flat-square)](https://www.npmjs.com/package/node-transactions)
 
 ## Usage
 Examples of code are shown in ./test/index.spec.js
+
 In case you are already using `generators-yields` functions - you are completely set up.
-If you are writing classic `async-callback` code - you would probbaly like to look at `thunkify` package.
+
+If you are writing classic `async-callback` code - you would probably like to look at `thunkify` package.
 
 ##API
 The first thing you need is the `context` object, which would have all *required* data for tasks execution.
@@ -21,8 +27,8 @@ The main brick of the *`Node Transactions`* module is a `task`:
 ```javascript
 task = {
 	name: 'westeros',
-	perform: function *() {},
-	rollback: function *() {}
+	perform: function *doYourJob() { ... },
+	rollback: function *revertChanges() { ... }
 };
 ```
 
