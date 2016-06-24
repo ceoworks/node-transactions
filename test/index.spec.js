@@ -1,8 +1,8 @@
-var expect = require('chai').expect,
-	mocha = require('mocha'),
-	coMocha = require('co-mocha'),
-	Transactions = require('../'),
-	util = require('./util');
+const expect = require('chai').expect;
+const mocha = require('mocha');
+const coMocha = require('co-mocha');
+const Transactions = require('../');
+const util = require('./util');
 coMocha(mocha);
 
 describe('node transactions engine', function () {
