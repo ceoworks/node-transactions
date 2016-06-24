@@ -5,13 +5,16 @@
 [![npm](https://img.shields.io/badge/npm-1.1.1-blue.svg)](https://www.npmjs.com/package/node-transactions)
 
 ## Usage
-Examples of code are shown in ./test/index.spec.js
+Examples of code are shown in `test/index.spec.js`
 
 In case you are already using `generators-yields` functions - you are completely set up.
 
 If you are writing classic `async-callback` code - you would probably like to look at `thunkify` package.
 
 ##API
+
+### Context
+
 The first thing you need is the `context` object, which would have all **required** data for tasks execution.
 ```javascript
 let context = {
@@ -20,6 +23,7 @@ let context = {
 }
 ```
 
+### Task
 The main brick of the **`Node Transactions`** module is a *`task`*:
 ```javascript
 task = {
@@ -29,10 +33,13 @@ task = {
 };
 ```
 
+### Launching
 When you have prepared bunch of `tasks` and `context` - simply launch Transactions engine:
 ```javascript
 let result = yield new Transactions([task, nextTask, ...], context);
 ```
+
+### Result
 
 `result` would have next properties:
 
@@ -40,6 +47,8 @@ let result = yield new Transactions([task, nextTask, ...], context);
 2. `result.context[task.name].performResult` - the result of successful execution of `tesk.perform`
 3. `result.error` - the first and only `task.perform` error (only if `result.success === false`)
 4. `result.rollbackErrors` - array of possible `task.rollback` errors
+
+### Storing transactions' data
 
 To store the intermediate transaction's data, you need to pass into the context your own implementation of storeTransactionState, which would get next args:
 ```javascript
