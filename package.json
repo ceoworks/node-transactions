@@ -1,6 +1,6 @@
 {
   "name": "node-transactions",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Transactions engine for node.js",
   "main": "index.js",
   "scripts": {
@@ -25,10 +25,10 @@
   "homepage": "https://github.com/ceoworks/node-transactions#readme",
   "dependencies": {},
   "devDependencies": {
-    "chai": "^3.4.1",
-    "co-mocha": "^1.1.2",
-    "coveralls": "^2.11.6",
-    "istanbul": "^0.4.2",
-    "mocha": "^2.3.4"
+    "chai": "3.4.1",
+    "co-mocha": "1.1.2",
+    "coveralls": "2.11.6",
+    "istanbul": "0.4.2",
+    "mocha": "2.3.4"
   }
 }
